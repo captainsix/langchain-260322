@@ -15,11 +15,11 @@ SUMMARY_DIR = "summaries"
 os.makedirs(SUMMARY_DIR, exist_ok=True)
 
 # Streamlit UI 설정
-st.set_page_config(page_title="요약 기반 기억 챗봇")
-st.title("요약 기반 기억 챗봇")
+st.set_page_config(page_title="여행지 연관 추천 챗봇")
+st.title("🏝️ 여행지 연관 추천 챗봇 🏝️")
 
 # 사용자 식별자(thread_id)
-thread_id = st.text_input("사용자 ID를 입력하세요:", value="default_user")
+thread_id = st.text_input("🚗 사용자 이름을 입력하세요.", value="")
 summary_path = os.path.join(SUMMARY_DIR, f"{thread_id}.txt")
 
 # 이전 요약 불러오기 (없으면 빈 문자열)
@@ -41,7 +41,8 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 # LCEL 기반 프롬프트
 main_prompt = PromptTemplate.from_template(
     """
-    너는 사용자의 과거 요약 기억과 최근 대화를 참고해 대화하는 AI야.
+    너는 사용자의 과거 여행지 요약 기억과 최근 대화를 참고해 대화하는 AI야.
+    답변의 처음에는 사용자의 이름을 넣어줘.
 
     [이전 요약된 기억]
     {longterm_summary}
@@ -71,7 +72,7 @@ def get_chain(memory_obj, longterm_summary):
 conversation_chain = get_chain(memory, longterm_summary)
 
 # 사용자 질문 입력 (엔터로 제출 가능)
-question = st.text_input("질문을 입력하세요:")
+question = st.text_input("✈️ 어디로 여행을 떠나 볼까요?")
 
 # 버튼 추가: 사용자가 버튼을 눌러야만 답변 생성
 submit_button = st.button("답변 생성")
@@ -127,7 +128,7 @@ if submit_button and question.strip() != "":
 # 최근 대화 출력
 if memory.chat_memory.messages:
     st.write("---")
-    st.write("**최근 대화 기록:**")
+    st.write("**최근 대화 기록**")
     for msg in memory.chat_memory.messages[-10:]:
         role = "사용자" if msg.type == "human" else "AI"
         st.write(f"{role}: {msg.content}")
